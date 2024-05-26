@@ -31,6 +31,12 @@ public class UserController {
         tokenList.add(token);
         model.addAttribute("token", token);
         session.setAttribute("tokenList", tokenList);
+
+        System.out.println("GETリクエストを受け取りました");
+        System.out.println("新しいトークンを発行し、セッションスコープに格納します");
+        System.out.println("発行されたトークン:" + token);
+        System.out.println("発行されたトークンをフォームのhiddenフィールドに設定します");
+        System.out.println("---------");
         return "index";
     }
 
@@ -40,16 +46,26 @@ public class UserController {
         user.setName(form.getName());
         List<UUID> sessionTokenList = (List<UUID>) session.getAttribute("tokenList");
 
+        System.out.println("POSTリクエストを受け取りました");
+        System.out.println("送信されたフォームのトークン: " + form.getToken());
+
         if (sessionTokenList.contains(form.getToken())){
-            System.out.println("if文が実行されました");
+            System.out.println("トークンがセッションスコープのトークンリストに存在します");
+            System.out.println("削除前のセッションスコープのトークンリスト" + sessionTokenList);
+            System.out.println("セッションスコープのトークンリストからフォームのトークンと一致するものを削除");
+
             sessionTokenList.remove(form.getToken());
-            System.out.println("データベースに" + form.getName() + "さんを格納しました");
+
+            System.out.println("削除後のセッションスコープのトークンリスト" + sessionTokenList);
+            System.out.println(form.getName() + " さんをデータベースに保存しました");
             model.addAttribute("result", "送信成功!");
         }else{
+            System.out.println("トークンがセッションスコープのリストに存在しません");
             model.addAttribute("result", "送信失敗!すでに送信済みのリクエストです。");
         }
 
         System.out.println("resultページに遷移します");
+        System.out.println("---------");
         return "result";
     }
 }
