@@ -33,8 +33,9 @@ public class UserController {
         session.setAttribute("tokenList", tokenList);
 
         System.out.println("GETリクエストを受け取りました");
-        System.out.println("新しいトークンを発行し、セッションスコープに格納します");
         System.out.println("発行されたトークン:" + token);
+        System.out.println("トークンをセッションスコープに格納します");
+        System.out.println("現在のセッションスコープ" + session.getAttribute("tokenList"));
         System.out.println("発行されたトークンをフォームのhiddenフィールドに設定します");
         System.out.println("---------");
         return "index";
@@ -44,19 +45,19 @@ public class UserController {
     public String sendName(UserForm form, Model model){
         User user = new User();
         user.setName(form.getName());
-        List<UUID> sessionTokenList = (List<UUID>) session.getAttribute("tokenList");
+        List<UUID> tokenList = (List<UUID>) session.getAttribute("tokenList");
 
         System.out.println("POSTリクエストを受け取りました");
         System.out.println("送信されたフォームのトークン: " + form.getToken());
 
-        if (sessionTokenList.contains(form.getToken())){
+        if (tokenList.contains(form.getToken())){
+            System.out.println("削除前のセッションスコープのトークンリスト" + tokenList);
             System.out.println("トークンがセッションスコープのトークンリストに存在します");
-            System.out.println("削除前のセッションスコープのトークンリスト" + sessionTokenList);
             System.out.println("セッションスコープのトークンリストからフォームのトークンと一致するものを削除");
 
-            sessionTokenList.remove(form.getToken());
+            tokenList.remove(form.getToken());
 
-            System.out.println("削除後のセッションスコープのトークンリスト" + sessionTokenList);
+            System.out.println("削除後のセッションスコープのトークンリスト" + tokenList);
             System.out.println(form.getName() + " さんをデータベースに保存しました");
             model.addAttribute("result", "送信成功!");
         }else{
